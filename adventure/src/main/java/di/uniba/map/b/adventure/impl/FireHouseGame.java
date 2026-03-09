@@ -82,51 +82,105 @@ public class FireHouseGame extends GameDescription implements GameObservable {
         use.setAlias(new String[]{"utilizza", "combina"});
         getCommands().add(use);
         //Rooms
-        Room hall = new Room(0, "Corridoio", "Sei nel corridoio della vecchia casa.\nOrmai non abiti più qui da anni!\nTi ricorderai come raggiungere le innumerevoli stanze?");
-        hall.setLook("Sei nel corridoio, a nord vedi il bagno, a sud il soggiorno e ad ovest la tua cameretta.\nForse il gioco sarà lì?");
-        Room livingRoom = new Room(1, "Soggiorno", "Ti trovi nel soggiorno.\nCi sono quei mobili marrone scuro che hai sempre odiato e delle orribili sedie.");
-        livingRoom.setLook("Non c'è nulla di interessante qui.");
-        Room kitchen = new Room(2, "Cucina", "Ti trovi nella solita cucina.\nMobili bianchi, maniglie azzurre, quello strano lampadario che adoravi tanto quando eri piccolo.\n"
-                + "C'è un tavolo con un bel portafrutta e una finestra.");
-        kitchen.setLook("La solita cucina, ma noti una chiave vicino al portafrutta.");
-        Room bathroom = new Room(3, "Bagno", "Sei nel bagno.\nQuanto tempo passato qui dentro...meglio non pensarci...");
-        bathroom.setLook("Vedo delle batterie sul mobile alla destra del lavandino.");
-        Room yourRoom = new Room(4, "La tua cameratta", "Finalmente la tua cameretta!\nQuesto luogo ti è così famigliare...ma non ricordi dove hai messo il nuovo regalo di zia Lina.");
-        yourRoom.setLook("C'è un armadio bianco, di solito ci conservi i tuoi giochi.");
+        //Rooms
+        Room entrance = new Room(0, "Ingresso laterale",
+            "Sei davanti all'ingresso laterale della banca. La porta è protetta da un sistema di allarme.");
+
+        entrance.setLook("La porta ha un pannello elettronico. Devi disattivare l'allarme per entrare.");
+
+        Room security = new Room(1, "Sala sorveglianza",
+            "Una stanza piena di monitor e telecamere che controllano tutta la banca.");
+
+        security.setLook("Potresti usare un computer per manipolare il sistema di sicurezza.");
+
+        Room corridor = new Room(2, "Corridoio di sicurezza",
+            "Un lungo corridoio con sensori di movimento e laser di sicurezza.");
+
+        corridor.setLook("I laser sembrano molto sensibili.");
+
+        Room vault = new Room(3, "Caveau",
+            "Il caveau principale della banca. Qui è custodito il denaro.");
+
+        vault.setLook("La serratura del caveau è complessa.");
+
+        Room escape = new Room(4, "Uscita di emergenza",
+            "Questa è la via di fuga. Se hai il bottino puoi scappare.");
         //map
-        kitchen.setEast(livingRoom);
-        livingRoom.setNorth(hall);
-        livingRoom.setWest(kitchen);
-        hall.setSouth(livingRoom);
-        hall.setWest(yourRoom);
-        hall.setNorth(bathroom);
-        bathroom.setSouth(hall);
-        yourRoom.setEast(hall);
-        getRooms().add(kitchen);
-        getRooms().add(livingRoom);
-        getRooms().add(hall);
-        getRooms().add(bathroom);
-        getRooms().add(yourRoom);
-        //obejcts
-        AdvObject battery = new AdvObject(1, "batteria", "Un pacco di batterie, chissà se sono cariche.");
-        battery.setAlias(new String[]{"batterie", "pile", "pila"});
-        bathroom.getObjects().add(battery);
-        AdvObjectContainer wardrobe = new AdvObjectContainer(2, "armadio", "Un semplice armadio.");
-        wardrobe.setAlias(new String[]{"guardaroba", "vestiario"});
-        wardrobe.setOpenable(false);
-        wardrobe.setPickupable(false);
-        wardrobe.setOpen(false);
-        yourRoom.getObjects().add(wardrobe);
-        AdvObject toy = new AdvObject(3, "giocattolo", "Il gioco che ti ha regalato zia Lina.");
-        toy.setAlias(new String[]{"gioco", "robot"});
-        toy.setPushable(false);
-        toy.setPush(false);
-        wardrobe.add(toy);
-        AdvObject kkey = new AdvObject(4, "chiave", "Usa semplice chiave come tante altre.");
-        kkey.setAlias(new String[]{"key"});
-        kkey.setPushable(false);
-        kkey.setPush(false);
-        kitchen.getObjects().add(kkey);
+        //map
+        entrance.setEast(security);
+
+        security.setWest(entrance);
+        security.setEast(corridor);
+
+        corridor.setWest(security);
+        corridor.setEast(vault);
+
+        vault.setWest(corridor);
+        vault.setEast(escape);
+
+        escape.setWest(vault);
+        getRooms().add(entrance);
+        getRooms().add(security);
+        getRooms().add(corridor);
+        getRooms().add(vault);
+        getRooms().add(escape);
+        
+        //objects
+
+        // Tessera elettronica per entrare nella banca
+        AdvObject keycard = new AdvObject(1, "tessera", 
+            "Una tessera magnetica per aprire porte di sicurezza.");
+        keycard.setAlias(new String[]{"badge", "card"});
+        keycard.setPushable(false);
+        keycard.setPush(false);
+        entrance.getObjects().add(keycard);
+
+
+        // Laptop per hackerare il sistema di sicurezza
+        AdvObject laptop = new AdvObject(2, "laptop", 
+            "Un laptop con software di hacking installato.");
+        laptop.setAlias(new String[]{"computer", "pc"});
+        laptop.setPushable(false);
+        laptop.setPush(false);
+        security.getObjects().add(laptop);
+
+
+        // Specchio per deviare i laser nel corridoio
+        AdvObject mirror = new AdvObject(3, "specchio", 
+            "Uno specchio portatile. Potrebbe riflettere i raggi laser.");
+        mirror.setAlias(new String[]{"vetro"});
+        mirror.setPushable(false);
+        mirror.setPush(false);
+        corridor.getObjects().add(mirror);
+
+
+        // Trapano elettrico per aprire il caveau
+        AdvObject drill = new AdvObject(4, "trapano", 
+            "Un potente trapano industriale per forzare serrature.");
+        drill.setAlias(new String[]{"trapano_elettrico"});
+        drill.setPushable(false);
+        drill.setPush(false);
+        security.getObjects().add(drill);
+
+
+        // Contenitore: cassetta di sicurezza
+        AdvObjectContainer safeBox = new AdvObjectContainer(5, "cassetta", 
+            "Una piccola cassetta di sicurezza incassata nel muro.");
+        safeBox.setAlias(new String[]{"cassaforte", "cassetta_sicurezza"});
+        safeBox.setOpenable(true);
+        safeBox.setPickupable(false);
+        safeBox.setOpen(false);
+        corridor.getObjects().add(safeBox);
+
+
+        // Bottino dentro la cassetta
+        AdvObject money = new AdvObject(6, "bottino", 
+            "Una borsa piena di contanti.");
+        money.setAlias(new String[]{"soldi", "denaro"});
+        money.setPushable(false);
+        money.setPush(false);
+        safeBox.add(money);
+         
         //Observer
         GameObserver moveObserver = new MoveObserver();
         this.attach(moveObserver);
@@ -142,8 +196,9 @@ public class FireHouseGame extends GameDescription implements GameObservable {
         this.attach(openObserver);
         GameObserver useObserver = new UseObserver();
         this.attach(useObserver);
+        
         //set starting room
-        setCurrentRoom(hall);
+        setCurrentRoom(entrance);
     }
 
     /**
