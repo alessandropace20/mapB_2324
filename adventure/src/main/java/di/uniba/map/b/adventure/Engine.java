@@ -51,9 +51,9 @@ public class Engine {
      */
     public void execute() {
         System.out.println("================================");
-        System.out.println("* Adventure v. 0.4 - 2023-2024 *");
+        System.out.println("* Adventure v. 1.0 - 2023-2024 *");
         System.out.println("*         developed by         *");
-        System.out.println("*       Pierpaolo Basile       *");
+        System.out.println("*       Alessandro Pace       *");
         System.out.println("================================");
         System.out.println();
         System.out.println(game.getWelcomeMsg());
