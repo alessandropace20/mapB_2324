@@ -64,7 +64,9 @@ public class Engine {
         System.out.println();
         System.out.print("?> ");
         Scanner scanner = new Scanner(System.in);
-        while (scanner.hasNextLine()) {
+        
+        //questo while gestisce sostanzialmente l'esecuzione, poichè attende ogni volta il comando testuale del giocatore
+        while (scanner.hasNextLine()) {                     
             String command = scanner.nextLine();
             ParserOutput p = parser.parse(command, game.getCommands(), game.getCurrentRoom().getObjects(), game.getInventory());
             if (p == null || p.getCommand() == null) {
