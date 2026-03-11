@@ -3,11 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package di.uniba.map.b.adventure.parser;
+package parser;
 
-import di.uniba.map.b.adventure.Utils;
-import di.uniba.map.b.adventure.type.AdvObject;
-import di.uniba.map.b.adventure.type.Command;
+import adventure.Utils;
+import type.AdvObject;
+import type.Command;
 import java.util.List;
 import java.util.Set;
 
