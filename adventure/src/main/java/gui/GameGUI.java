@@ -19,7 +19,7 @@ public class GameGUI {
         engine = new Engine(new FireHouseGame());
 
         JFrame frame = new JFrame("Avventura Testuale");
-        frame.setSize(700, 500);
+        frame.setSize(800, 600);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(new BorderLayout());
 
@@ -45,7 +45,7 @@ public class GameGUI {
 
         imageLabel = new JLabel();
         imageLabel.setHorizontalAlignment(JLabel.CENTER);
-        imageLabel.setPreferredSize(new Dimension(700,150));
+        imageLabel.setPreferredSize(new Dimension(700,300));
 
         frame.add(imageLabel, BorderLayout.NORTH);
 
