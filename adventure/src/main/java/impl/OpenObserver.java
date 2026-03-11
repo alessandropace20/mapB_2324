@@ -2,15 +2,15 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package di.uniba.map.b.adventure.impl;
+package impl;
 
-import di.uniba.map.b.adventure.GameDescription;
-import di.uniba.map.b.adventure.parser.ParserOutput;
-import di.uniba.map.b.adventure.type.AdvObject;
-import di.uniba.map.b.adventure.type.AdvObjectContainer;
-import di.uniba.map.b.adventure.type.CommandType;
+import adventure.GameDescription;
+import parser.ParserOutput;
+import type.AdvObject;
+import type.AdvObjectContainer;
+import type.CommandType;
 import java.util.Iterator;
-import di.uniba.map.b.adventure.GameObserver;
+import adventure.GameObserver;
 
 /**
  *

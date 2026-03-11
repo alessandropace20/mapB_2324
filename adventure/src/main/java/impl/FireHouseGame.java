@@ -3,20 +3,20 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package di.uniba.map.b.adventure.impl;
+package impl;
 
-import di.uniba.map.b.adventure.GameDescription;
-import di.uniba.map.b.adventure.parser.ParserOutput;
-import di.uniba.map.b.adventure.type.AdvObject;
-import di.uniba.map.b.adventure.type.AdvObjectContainer;
-import di.uniba.map.b.adventure.type.Command;
-import di.uniba.map.b.adventure.type.CommandType;
-import di.uniba.map.b.adventure.type.Room;
+import adventure.GameDescription;
+import parser.ParserOutput;
+import type.AdvObject;
+import type.AdvObjectContainer;
+import type.Command;
+import type.CommandType;
+import type.Room;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
-import di.uniba.map.b.adventure.GameObservable;
-import di.uniba.map.b.adventure.GameObserver;
+import adventure.GameObservable;
+import adventure.GameObserver;
 
 /**
  * ATTENZIONE: La descrizione del gioco è fatta in modo che qualsiasi gioco
@@ -105,7 +105,7 @@ public class FireHouseGame extends GameDescription implements GameObservable {
 
         Room escape = new Room(4, "Uscita di emergenza",
             "Questa è la via di fuga. Se hai il bottino puoi scappare.");
-        //map
+        
         //map
         entrance.setEast(security);
 
