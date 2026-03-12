@@ -1,136 +1,144 @@
 package gui;
 
 import adventure.Engine;
-import impl.FireHouseGame;
+
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
-import java.io.*;
 
-public class GameGUI {
+public class GameGUI extends JFrame {
 
-    private Engine engine;
-    private JTextArea output;
-    private JTextField input;
-    private JLabel imageLabel;
+    private final Engine engine;
+
+    private final JTextArea console = new JTextArea();
+    private final JTextField input = new JTextField();
+    private final JButton sendBtn = new JButton("Invia");
+
+    private final JLabel imageLabel = new JLabel();
+    private final JLabel roomLabel = new JLabel();
 
     public GameGUI() {
 
-        engine = new Engine(new FireHouseGame());
+        super("Adventure Game");
 
-        JFrame frame = new JFrame("Avventura Testuale");
-        frame.setSize(800, 600);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setLayout(new BorderLayout());
+        engine = new Engine(new impl.FireHouseGame());
 
-        /*
-        ---------------- MENU BAR ----------------
-        */
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setSize(1000, 700);
+        setLocationRelativeTo(null);
+
+        createMenuBar();
+
+        // ===== LABEL STANZA =====
+        roomLabel.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 16));
+        roomLabel.setBorder(BorderFactory.createEmptyBorder(5,10,5,10));
+
+        // ===== AREA TESTO =====
+        console.setEditable(false);
+        console.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 14));
+        console.setBackground(Color.BLACK);
+        console.setForeground(Color.WHITE);
+        console.setCaretColor(Color.WHITE);
+        console.setLineWrap(true);
+        console.setWrapStyleWord(true);
+
+        JScrollPane scroll = new JScrollPane(console);
+
+        // ===== IMMAGINE =====
+        imageLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        imageLabel.setOpaque(true);
+        imageLabel.setBackground(Color.BLACK);
+
+        // ===== INPUT =====
+        JPanel bottom = new JPanel(new BorderLayout(6,6));
+        bottom.add(input, BorderLayout.CENTER);
+        bottom.add(sendBtn, BorderLayout.EAST);
+
+        // ===== LATO SINISTRO (console + input) =====
+        JPanel left = new JPanel(new BorderLayout());
+        left.add(scroll, BorderLayout.CENTER);
+        left.add(bottom, BorderLayout.SOUTH);
+
+        // ===== SPLIT PANE (testo sinistra, immagine destra) =====
+        JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, left, imageLabel);
+        split.setResizeWeight(0.6);
+
+        JPanel root = new JPanel(new BorderLayout());
+        root.add(roomLabel, BorderLayout.NORTH);
+        root.add(split, BorderLayout.CENTER);
+
+        setContentPane(root);
+
+        // ===== EVENTI =====
+        sendBtn.addActionListener(e -> submit());
+        input.addActionListener(e -> submit());
+
+        // ===== MESSAGGIO INIZIALE =====
+        console.append(engine.getInitialMessage());
+        updateRoomInfo();
+
+        setVisible(true);
+    }
+
+    private void createMenuBar() {
 
         JMenuBar menuBar = new JMenuBar();
-        JMenu menu = new JMenu("File");
 
-        JMenuItem salva = new JMenuItem("Salva");
-        JMenuItem esci = new JMenuItem("Esci");
+        JMenu gameMenu = new JMenu("Gioco");
 
-        menu.add(salva);
-        menu.add(esci);
-        menuBar.add(menu);
+        JMenuItem saveItem = new JMenuItem("Salva...");
+        JMenuItem loadItem = new JMenuItem("Carica...");
+        JMenuItem exitItem = new JMenuItem("Esci");
 
-        frame.setJMenuBar(menuBar);
+        saveItem.addActionListener(e -> saveGame());
+        loadItem.addActionListener(e -> loadGame());
+        exitItem.addActionListener(e -> System.exit(0));
 
-        /*
-        ---------------- AREA IMMAGINE ----------------
-        */
+        gameMenu.add(saveItem);
+        gameMenu.add(loadItem);
+        gameMenu.addSeparator();
+        gameMenu.add(exitItem);
 
-        imageLabel = new JLabel();
-        imageLabel.setHorizontalAlignment(JLabel.CENTER);
-        imageLabel.setPreferredSize(new Dimension(700,300));
+        menuBar.add(gameMenu);
 
-        frame.add(imageLabel, BorderLayout.NORTH);
-
-        /*
-        ---------------- AREA TESTO ----------------
-        */
-
-        output = new JTextArea();
-        output.setEditable(false);
-        JScrollPane scroll = new JScrollPane(output);
-
-        frame.add(scroll, BorderLayout.CENTER);
-
-        /*
-        ---------------- INPUT COMANDI ----------------
-        */
-
-        input = new JTextField();
-        JButton send = new JButton("Invia");
-
-        JPanel bottom = new JPanel(new BorderLayout());
-        bottom.add(input, BorderLayout.CENTER);
-        bottom.add(send, BorderLayout.EAST);
-
-        frame.add(bottom, BorderLayout.SOUTH);
-
-        /*
-        ---------------- MESSAGGIO INIZIALE ----------------
-        */
-
-        output.append(engine.getInitialMessage());
-
-        /*
-        ---------------- EVENTI ----------------
-        */
-
-        send.addActionListener(e -> sendCommand());
-        input.addActionListener(e -> sendCommand());
-
-        esci.addActionListener(e -> System.exit(0));
-
-        salva.addActionListener(e -> salvaPartita());
-
-        frame.setVisible(true);
+        setJMenuBar(menuBar);
     }
 
-    /*
-    ---------------- INVIO COMANDO ----------------
-    */
+    private void submit() {
 
-    private void sendCommand() {
+        String command = input.getText().trim();
 
-        String command = input.getText();
+        if (!command.isEmpty()) {
 
-        output.append("\n?> " + command + "\n");
+            console.append("\n> " + command + "\n");
 
-        String response = engine.processCommand(command);
+            String response = engine.processCommand(command);
 
-        output.append(response);
+            console.append(response);
 
-        input.setText("");
-    }
+            input.setText("");
 
-    /*
-    ---------------- SALVATAGGIO ----------------
-    */
-
-    private void salvaPartita() {
-
-        JFileChooser fileChooser = new JFileChooser();
-        int scelta = fileChooser.showSaveDialog(null);
-
-        if (scelta == JFileChooser.APPROVE_OPTION) {
-
-            File file = fileChooser.getSelectedFile();
-
-            try (PrintWriter writer = new PrintWriter(file)) {
-
-                writer.write(output.getText());
-
-            } catch (Exception e) {
-
-                JOptionPane.showMessageDialog(null, "Errore nel salvataggio");
-
-            }
+            updateRoomInfo();
         }
+    }
+
+    private void updateRoomInfo() {
+
+        String roomName = engine.getCurrentRoomName();
+
+        roomLabel.setText("Stanza: " + roomName);
+
+        String imageName = roomName.toLowerCase() + ".png";
+
+        imageLabel.setIcon(
+                ImageLoader.load(imageName, imageLabel.getWidth(), imageLabel.getHeight())
+        );
+    }
+
+    private void saveGame() {
+        console.append("\n[Salvataggio non ancora implementato]\n");
+    }
+
+    private void loadGame() {
+        console.append("\n[Caricamento non ancora implementato]\n");
     }
 }

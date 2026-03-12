@@ -52,3 +52,4 @@ public class MoveObserver implements GameObserver {
     }
 
 }
+ 
