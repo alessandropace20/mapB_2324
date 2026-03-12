@@ -4,9 +4,9 @@
  */
 package impl;
 
-import adventure.GameDescription;
-import adventure.GameObserver;
-import adventure.GameUtils;
+import engine.GameDescription;
+import engine.GameObserver;
+import engine.GameUtils;
 import parser.ParserOutput;
 import type.CommandType;
 

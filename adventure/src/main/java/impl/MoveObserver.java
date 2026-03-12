@@ -4,10 +4,10 @@
  */
 package impl;
 
-import adventure.GameDescription;
+import engine.GameDescription;
 import parser.ParserOutput;
 import type.CommandType;
-import adventure.GameObserver;
+import engine.GameObserver;
 
 /**
  *

@@ -1,20 +1,30 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+
 package gui;
 
-import adventure.Engine;
+import engine.Engine;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.image.BufferedImage;
+import javax.imageio.ImageIO;
 
 public class GameGUI extends JFrame {
-
-    private final Engine engine;
 
     private final JTextArea console = new JTextArea();
     private final JTextField input = new JTextField();
     private final JButton sendBtn = new JButton("Invia");
-
     private final JLabel imageLabel = new JLabel();
-    private final JLabel roomLabel = new JLabel();
+
+    private static final double IMAGE_OVERSCALE = 1.90;
+
+    private final Engine engine;
+    private String currentRoomName = null;
 
     public GameGUI() {
 
@@ -26,15 +36,12 @@ public class GameGUI extends JFrame {
         setSize(1000, 700);
         setLocationRelativeTo(null);
 
-        createMenuBar();
+        imageLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        imageLabel.setOpaque(true);
+        imageLabel.setBackground(Color.WHITE);
 
-        // ===== LABEL STANZA =====
-        roomLabel.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 16));
-        roomLabel.setBorder(BorderFactory.createEmptyBorder(5,10,5,10));
-
-        // ===== AREA TESTO =====
         console.setEditable(false);
-        console.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 14));
+        console.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 15));
         console.setBackground(Color.BLACK);
         console.setForeground(Color.WHITE);
         console.setCaretColor(Color.WHITE);
@@ -43,102 +50,136 @@ public class GameGUI extends JFrame {
 
         JScrollPane scroll = new JScrollPane(console);
 
-        // ===== IMMAGINE =====
-        imageLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        imageLabel.setOpaque(true);
-        imageLabel.setBackground(Color.BLACK);
-
-        // ===== INPUT =====
-        JPanel bottom = new JPanel(new BorderLayout(6,6));
+        JPanel bottom = new JPanel(new BorderLayout(6, 6));
         bottom.add(input, BorderLayout.CENTER);
         bottom.add(sendBtn, BorderLayout.EAST);
 
-        // ===== LATO SINISTRO (console + input) =====
-        JPanel left = new JPanel(new BorderLayout());
-        left.add(scroll, BorderLayout.CENTER);
-        left.add(bottom, BorderLayout.SOUTH);
+        JPanel right = new JPanel(new BorderLayout(6, 6));
+        right.add(scroll, BorderLayout.CENTER);
+        right.add(bottom, BorderLayout.SOUTH);
 
-        // ===== SPLIT PANE (testo sinistra, immagine destra) =====
-        JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, left, imageLabel);
-        split.setResizeWeight(0.6);
+        JSplitPane split = new JSplitPane(JSplitPane.VERTICAL_SPLIT, imageLabel, right);
+        split.setResizeWeight(0.65);
+
+        JPanel topButtons = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 8));
+        topButtons.setOpaque(false);
+
+        JButton btnSave = new JButton("Salva");
+        btnSave.addActionListener(e -> console.append("[Salvataggio non implementato]\n"));
+
+        JButton btnExit = new JButton("Esci");
+        btnExit.addActionListener(e -> System.exit(0));
+
+        topButtons.add(btnSave);
+        topButtons.add(btnExit);
 
         JPanel root = new JPanel(new BorderLayout());
-        root.add(roomLabel, BorderLayout.NORTH);
+        root.add(topButtons, BorderLayout.NORTH);
         root.add(split, BorderLayout.CENTER);
 
         setContentPane(root);
 
-        // ===== EVENTI =====
         sendBtn.addActionListener(e -> submit());
         input.addActionListener(e -> submit());
 
-        // ===== MESSAGGIO INIZIALE =====
         console.append(engine.getInitialMessage());
-        updateRoomInfo();
+        updateRoomImage();
 
+        addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                if (currentRoomName != null) {
+                    updateRoomImage();
+                }
+            }
+        });
         setVisible(true);
     }
 
-    private void createMenuBar() {
-
-        JMenuBar menuBar = new JMenuBar();
-
-        JMenu gameMenu = new JMenu("Gioco");
-
-        JMenuItem saveItem = new JMenuItem("Salva...");
-        JMenuItem loadItem = new JMenuItem("Carica...");
-        JMenuItem exitItem = new JMenuItem("Esci");
-
-        saveItem.addActionListener(e -> saveGame());
-        loadItem.addActionListener(e -> loadGame());
-        exitItem.addActionListener(e -> System.exit(0));
-
-        gameMenu.add(saveItem);
-        gameMenu.add(loadItem);
-        gameMenu.addSeparator();
-        gameMenu.add(exitItem);
-
-        menuBar.add(gameMenu);
-
-        setJMenuBar(menuBar);
+    public void println(String text) {
+        console.append(text + "\n");
+        console.setCaretPosition(console.getDocument().getLength());
     }
 
     private void submit() {
 
-        String command = input.getText().trim();
+        String cmd = input.getText().trim();
 
-        if (!command.isEmpty()) {
+        if (!cmd.isEmpty()) {
 
-            console.append("\n> " + command + "\n");
+            println("> " + cmd);
 
-            String response = engine.processCommand(command);
+            String response = engine.processCommand(cmd);
 
             console.append(response);
 
             input.setText("");
 
-            updateRoomInfo();
+            updateRoomImage();
         }
     }
 
-    private void updateRoomInfo() {
+    private void updateRoomImage() {
 
         String roomName = engine.getCurrentRoomName();
 
-        roomLabel.setText("Stanza: " + roomName);
+        currentRoomName = roomName;
 
-        String imageName = roomName.toLowerCase() + ".png";
+        String fileName = roomName.toLowerCase() + ".png";
 
-        imageLabel.setIcon(
-                ImageLoader.load(imageName, imageLabel.getWidth(), imageLabel.getHeight())
-        );
+        drawFramedImage("/images/" + fileName);
     }
 
-    private void saveGame() {
-        console.append("\n[Salvataggio non ancora implementato]\n");
-    }
+    private void drawFramedImage(String classpathImage) {
 
-    private void loadGame() {
-        console.append("\n[Caricamento non ancora implementato]\n");
+        try {
+
+            BufferedImage original = ImageIO.read(getClass().getResource(classpathImage));
+
+            if (original == null) {
+                imageLabel.setIcon(null);
+                imageLabel.setText("[Immagine non trovata]");
+                return;
+            }
+
+            int panelW = Math.max(1, imageLabel.getWidth());
+            int panelH = Math.max(1, imageLabel.getHeight());
+
+            double scale = Math.min(
+                    (double) panelW / original.getWidth(),
+                    (double) panelH / original.getHeight()
+            );
+
+            scale *= IMAGE_OVERSCALE;
+
+            int newW = (int) Math.round(original.getWidth() * scale);
+            int newH = (int) Math.round(original.getHeight() * scale);
+
+            BufferedImage framed = new BufferedImage(panelW, panelH, BufferedImage.TYPE_INT_RGB);
+
+            Graphics2D g2d = framed.createGraphics();
+            g2d.setColor(Color.BLACK);
+            g2d.fillRect(0, 0, panelW, panelH);
+
+            g2d.setRenderingHint(
+                    RenderingHints.KEY_INTERPOLATION,
+                    RenderingHints.VALUE_INTERPOLATION_BILINEAR
+            );
+
+            int x = (panelW - newW) / 2;
+            int y = (panelH - newH) / 2;
+
+            g2d.drawImage(original, x, y, newW, newH, null);
+
+            g2d.dispose();
+
+            imageLabel.setIcon(new ImageIcon(framed));
+            imageLabel.setText(null);
+
+        } catch (Exception e) {
+
+            imageLabel.setIcon(null);
+            imageLabel.setText("[Errore immagine]");
+        }
     }
 }
