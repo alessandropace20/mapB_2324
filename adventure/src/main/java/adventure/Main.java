@@ -5,7 +5,7 @@
 package adventure;
 
 import javax.swing.SwingUtilities;
-import gui.GameGUI;
+import gui.MenuFrame;
 /**
  *
  * @author alessandropace
@@ -18,8 +18,9 @@ public class Main {
     public static void main(String[] args) {
 
         SwingUtilities.invokeLater(() -> {
-            new GameGUI();
-        });
+            MenuFrame menu = new MenuFrame();
+            menu.setVisible(true);
+         });
     }    
     
 }

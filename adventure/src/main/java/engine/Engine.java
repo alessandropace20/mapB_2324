@@ -89,16 +89,4 @@ public class Engine {
     public String getCurrentRoomName() {
         return game.getCurrentRoom().getName();
     }
-
-    /**
-     * Avvio dell'applicazione con GUI Swing
-     */
-    public static void main(String[] args) {
-
-        SwingUtilities.invokeLater(() -> {
-            new GameGUI();
-        });
-
-    }
-
 }
