@@ -4,13 +4,13 @@
  */
 package impl;
 
-import adventure.GameDescription;
+import engine.GameDescription;
 import parser.ParserOutput;
 import type.AdvObject;
 import type.AdvObjectContainer;
 import type.CommandType;
 import java.util.Iterator;
-import adventure.GameObserver;
+import engine.GameObserver;
 
 /**
  *

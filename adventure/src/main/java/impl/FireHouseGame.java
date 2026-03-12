@@ -5,7 +5,7 @@
  */
 package impl;
 
-import adventure.GameDescription;
+import engine.GameDescription;
 import parser.ParserOutput;
 import type.AdvObject;
 import type.AdvObjectContainer;
@@ -15,8 +15,8 @@ import type.Room;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
-import adventure.GameObservable;
-import adventure.GameObserver;
+import engine.GameObservable;
+import engine.GameObserver;
 
 /**
  * ATTENZIONE: La descrizione del gioco è fatta in modo che qualsiasi gioco
